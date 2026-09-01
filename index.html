@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Tracker</title>
+  <meta name="description" content="A simple expense tracker to manage your income and expenses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <h1>💸 Expense Tracker</h1>
+      <p>Take control of your money — track income & expenses in one place.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Summary cards -->
+    <section class="summary" aria-label="Financial summary">
+      <article class="summary-card card-income">
+        <div class="summary-icon">📈</div>
+        <div>
+          <p class="summary-label">Total Income</p>
+          <p class="summary-value" id="total-income">₹0.00</p>
+        </div>
+      </article>
+      <article class="summary-card card-expense">
+        <div class="summary-icon">📉</div>
+        <div>
+          <p class="summary-label">Total Expenses</p>
+          <p class="summary-value" id="total-expense">₹0.00</p>
+        </div>
+      </article>
+      <article class="summary-card card-balance">
+        <div class="summary-icon">💼</div>
+        <div>
+          <p class="summary-label">Current Balance</p>
+          <p class="summary-value" id="total-balance">₹0.00</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="dashboard">
+      <!-- Add / Edit form -->
+      <section class="panel form-panel">
+        <div class="panel-header">
+          <h2 id="form-title">➕ Add Transaction</h2>
+        </div>
+
+        <form id="transaction-form" novalidate>
+          <div class="type-toggle" role="radiogroup" aria-label="Transaction type">
+            <label class="type-option type-expense">
+              <input type="radio" name="type" value="expense" checked />
+              <span>💳 Expense</span>
+            </label>
+            <label class="type-option type-income">
+              <input type="radio" name="type" value="income" />
+              <span>💵 Income</span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Amount <span class="required">*</span></label>
+            <div class="input-affix">
+              <span class="affix">₹</span>
+              <input type="number" id="amount" name="amount" placeholder="0.00" min="0.01" step="0.01" inputmode="decimal" />
+            </div>
+            <small class="error-message" id="amount-error"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category <span class="required">*</span></label>
+            <select id="category" name="category"></select>
+            <small class="error-message" id="category-error"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="date">Date <span class="required">*</span></label>
+            <input type="date" id="date" name="date" />
+            <small class="error-message" id="date-error"></small>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description</label>
+            <input type="text" id="description" name="description" placeholder="e.g. Groceries for the week" maxlength="60" />
+            <small class="error-message" id="description-error"></small>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">Add Transaction</button>
+            <button type="button" class="btn btn-secondary" id="cancel-edit" hidden>Cancel Edit</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Transactions list -->
+      <section class="panel list-panel">
+        <div class="panel-header">
+          <h2>🧾 Transactions</h2>
+          <span class="count-badge" id="transaction-count">0</span>
+        </div>
+
+        <div class="filters">
+          <div class="filter-type" role="group" aria-label="Filter by type">
+            <button class="filter-btn active" data-type="all">All</button>
+            <button class="filter-btn" data-type="income">Income</button>
+            <button class="filter-btn" data-type="expense">Expense</button>
+          </div>
+          <div class="filter-category">
+            <select id="category-filter" aria-label="Filter by category"></select>
+          </div>
+        </div>
+
+        <ul class="transaction-list" id="transaction-list"></ul>
+
+        <div class="empty-state" id="empty-state" hidden>
+          <p class="empty-emoji">🗒️</p>
+          <p class="empty-message" id="empty-message">No transactions yet. Add your first one!</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- Monthly summary & category chart -->
+    <section class="panel monthly-panel">
+      <div class="monthly-header">
+        <div>
+          <h2>📅 Monthly Summary</h2>
+          <p class="subtitle">Understand your spending for a month at a glance.</p>
+        </div>
+        <input type="month" id="month-select" class="month-input" aria-label="Select month" />
+      </div>
+
+      <div class="monthly-grid">
+        <div class="monthly-cards">
+          <div class="mini-card">
+            <span class="mini-label">Income</span>
+            <span class="mini-value income-text" id="month-income">₹0.00</span>
+          </div>
+          <div class="mini-card">
+            <span class="mini-label">Expenses</span>
+            <span class="mini-value expense-text" id="month-expense">₹0.00</span>
+          </div>
+          <div class="mini-card">
+            <span class="mini-label">Net</span>
+            <span class="mini-value" id="month-net">₹0.00</span>
+          </div>
+          <div class="mini-card">
+            <span class="mini-label">Top Category</span>
+            <span class="mini-value top-category" id="month-top-category">—</span>
+            <span class="mini-sub" id="month-top-category-amount"></span>
+          </div>
+        </div>
+
+        <div class="chart-section">
+          <h3 class="chart-title">Category-wise Expenses</h3>
+          <div class="chart-area">
+            <div class="chart-wrap">
+              <canvas id="category-chart" width="240" height="240" role="img" aria-label="Category-wise expense donut chart"></canvas>
+              <div class="chart-empty" id="chart-empty" hidden>
+                <p>No expenses this month.</p>
+              </div>
+            </div>
+            <ul class="chart-legend" id="chart-legend"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p>🔒 Your data is saved locally in your browser via Local Storage.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
