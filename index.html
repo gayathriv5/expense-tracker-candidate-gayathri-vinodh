@@ -13,13 +13,14 @@
 <body>
   <header class="app-header">
     <div class="header-inner">
-      <h1>💸 Expense Tracker</h1>
+      <h1>Expense Tracker</h1>
       <p>Take control of your money — track income & expenses in one place.</p>
     </div>
   </header>
 
   <main class="container">
-    <!-- Summary cards -->
+
+
     <section class="summary" aria-label="Financial summary">
       <article class="summary-card card-income">
         <div class="summary-icon">📈</div>
@@ -45,21 +46,20 @@
     </section>
 
     <section class="dashboard">
-      <!-- Add / Edit form -->
       <section class="panel form-panel">
         <div class="panel-header">
-          <h2 id="form-title">➕ Add Transaction</h2>
+          <h2 id="form-title"> Add Transaction</h2>
         </div>
 
         <form id="transaction-form" novalidate>
           <div class="type-toggle" role="radiogroup" aria-label="Transaction type">
             <label class="type-option type-expense">
               <input type="radio" name="type" value="expense" checked />
-              <span>💳 Expense</span>
+              <span> Expense</span>
             </label>
             <label class="type-option type-income">
               <input type="radio" name="type" value="income" />
-              <span>💵 Income</span>
+              <span> Income</span>
             </label>
           </div>
 
@@ -97,10 +97,10 @@
         </form>
       </section>
 
-      <!-- Transactions list -->
+
       <section class="panel list-panel">
         <div class="panel-header">
-          <h2>🧾 Transactions</h2>
+          <h2>Transactions</h2>
           <span class="count-badge" id="transaction-count">0</span>
         </div>
 
@@ -118,17 +118,15 @@
         <ul class="transaction-list" id="transaction-list"></ul>
 
         <div class="empty-state" id="empty-state" hidden>
-          <p class="empty-emoji">🗒️</p>
           <p class="empty-message" id="empty-message">No transactions yet. Add your first one!</p>
         </div>
       </section>
     </section>
 
-    <!-- Monthly summary & category chart -->
     <section class="panel monthly-panel">
       <div class="monthly-header">
         <div>
-          <h2>📅 Monthly Summary</h2>
+          <h2>Monthly Summary</h2>
           <p class="subtitle">Understand your spending for a month at a glance.</p>
         </div>
         <input type="month" id="month-select" class="month-input" aria-label="Select month" />
@@ -170,10 +168,6 @@
       </div>
     </section>
   </main>
-
-  <footer class="app-footer">
-    <p>🔒 Your data is saved locally in your browser via Local Storage.</p>
-  </footer>
 
   <script src="script.js"></script>
 </body>

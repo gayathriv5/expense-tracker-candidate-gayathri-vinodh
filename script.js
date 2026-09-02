@@ -1,42 +1,32 @@
-/* ============================================================
-   Expense Tracker — Vanilla JS Application
-   Features:
-   - Add / edit / delete transactions (income + expense)
-   - Form validation with inline error messages
-   - Local Storage persistence
-   - Filter by type (all / income / expense) and category
-   - Totals summary (income, expense, balance)
-   - Monthly summary & top spending category
-   - Category-wise expense donut chart (Canvas API)
-   ============================================================ */
+
 
 "use strict";
 
-/* ---------------- Constants & State ---------------- */
+
 
 const STORAGE_KEY = "expense-tracker-transactions";
 
 const CATEGORIES = {
   expense: {
-    Food: "🍔",
-    Groceries: "🛒",
-    Transport: "🚗",
-    Rent: "🏠",
-    Utilities: "💡",
-    Entertainment: "🎬",
-    Shopping: "🛍️",
-    Health: "🏥",
-    Education: "📚",
-    Travel: "✈️",
-    Other: "📦",
+    Food: "",
+    Groceries: "",
+    Transport: "",
+    Rent: "",
+    Utilities: "",
+    Entertainment: "",
+    Shopping: "",
+    Health: "",
+    Education: "",
+    Travel: "",
+    Other: "",
   },
   income: {
-    Salary: "💰",
-    Freelance: "💻",
-    Investment: "📈",
-    Business: "🏪",
-    Gift: "🎁",
-    Other: "📦",
+    Salary: "",
+    Freelance: "",
+    Investment: "",
+    Business: "",
+    Gift: "",
+    Other: "",
   },
 };
 
@@ -56,11 +46,11 @@ const CHART_COLORS = [
 ];
 
 let transactions = loadTransactions();
-let currentFilter = "all"; // 'all' | 'income' | 'expense'
-let categoryFilter = "all"; // 'all' | category name
-let editingId = null; // id of transaction being edited (null = add mode)
+let currentFilter = "all";
+let categoryFilter = "all";
+let editingId = null;
 
-/* ---------------- DOM References ---------------- */
+
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -99,7 +89,7 @@ const chartCanvas = $("#category-chart");
 const chartEmpty = $("#chart-empty");
 const chartLegend = $("#chart-legend");
 
-/* ---------------- Utility Functions ---------------- */
+
 
 function escapeHtml(str) {
   const div = document.createElement("div");
@@ -123,7 +113,7 @@ function getTodayISO() {
 }
 
 function getCurrentMonth() {
-  return getTodayISO().slice(0, 7); // "YYYY-MM"
+  return getTodayISO().slice(0, 7);
 }
 
 function formatDateDisplay(isoDate) {
@@ -141,7 +131,7 @@ function createId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
-/* ---------------- Local Storage ---------------- */
+
 
 function loadTransactions() {
   try {
@@ -149,7 +139,7 @@ function loadTransactions() {
     if (!raw) return [];
     const data = JSON.parse(raw);
     if (!Array.isArray(data)) return [];
-    // Basic sanitization
+
     return data
       .filter(
         (t) =>
@@ -179,11 +169,11 @@ function saveTransactions() {
   }
 }
 
-/* ---------------- Category Helpers ---------------- */
+
 
 function getCategoryEmoji(category, type) {
   const catMap = CATEGORIES[type] || CATEGORIES.expense;
-  return catMap[category] || "📦";
+  return catMap[category] || "";
 }
 
 function populateCategorySelect(selectedType = "expense", selectedCategory = "") {
@@ -199,7 +189,7 @@ function populateCategorySelect(selectedType = "expense", selectedCategory = "")
 }
 
 function populateCategoryFilter() {
-  // Build a unique set of categories from existing transactions
+
   const used = new Set();
   transactions.forEach((t) => used.add(t.category));
 
@@ -222,7 +212,7 @@ function populateCategoryFilter() {
     categoryFilterSelect.appendChild(option);
   });
 
-  // Restore selection if still valid
+
   if (Array.from(categoryFilterSelect.options).some((o) => o.value === currentValue)) {
     categoryFilterSelect.value = currentValue;
   } else {
@@ -237,7 +227,7 @@ function expenseTypeOf(category) {
   return "other";
 }
 
-/* ---------------- Toast Notifications ---------------- */
+
 
 function showToast(message, type = "success") {
   let container = document.querySelector(".toast-container");
@@ -259,7 +249,7 @@ function showToast(message, type = "success") {
   }, 2600);
 }
 
-/* ---------------- Validation ---------------- */
+
 
 function setError(field, message) {
   const errorEl = document.getElementById(`${field}-error`);
@@ -280,7 +270,6 @@ function clearError(field) {
 function validateForm() {
   let isValid = true;
 
-  // Amount
   const amount = parseFloat(amountInput.value);
   if (!amountInput.value.trim()) {
     setError("amount", "Please enter an amount.");
@@ -295,7 +284,7 @@ function validateForm() {
     clearError("amount");
   }
 
-  // Category
+
   if (!categorySelect.value) {
     setError("category", "Please choose a category.");
     isValid = false;
@@ -303,7 +292,7 @@ function validateForm() {
     clearError("category");
   }
 
-  // Date
+
   if (!dateInput.value) {
     setError("date", "Please pick a date.");
     isValid = false;
@@ -314,7 +303,7 @@ function validateForm() {
     clearError("date");
   }
 
-  // Description (optional but validated if provided)
+
   const description = descriptionInput.value.trim();
   if (description.length > 60) {
     setError("description", "Description must be 60 characters or fewer.");
@@ -337,7 +326,7 @@ function isValidDate(dateStr) {
   );
 }
 
-/* ---------------- CRUD Operations ---------------- */
+
 
 function handleSubmit(e) {
   e.preventDefault();
@@ -354,7 +343,7 @@ function handleSubmit(e) {
   const description = descriptionInput.value.trim();
 
   if (editingId) {
-    // --- Update existing transaction ---
+
     const index = transactions.findIndex((t) => t.id === editingId);
     if (index !== -1) {
       transactions[index] = {
@@ -373,7 +362,7 @@ function handleSubmit(e) {
       return;
     }
   } else {
-    // --- Add new transaction ---
+
     transactions.push({
       id: createId(),
       type,
@@ -404,7 +393,7 @@ function startEdit(id) {
 
   clearAllErrors();
 
-  formTitle.textContent = "✏️ Edit Transaction";
+  formTitle.textContent = " Edit Transaction";
   submitBtn.textContent = "Save Changes";
   cancelEditBtn.hidden = false;
 
@@ -425,7 +414,7 @@ function deleteTransaction(id) {
   transactions = transactions.filter((t) => t.id !== id);
   saveTransactions();
 
-  // If we were editing this transaction, exit edit mode
+
   if (editingId === id) {
     resetForm();
   }
@@ -456,7 +445,7 @@ function clearAllErrors() {
   });
 }
 
-/* ---------------- Filtering ---------------- */
+
 
 function getFilteredTransactions() {
   return transactions
@@ -477,7 +466,7 @@ function handleFilterButton(e) {
   renderTransactions();
 }
 
-/* ---------------- Rendering ---------------- */
+
 
 function renderAll() {
   renderTotals();
@@ -499,7 +488,7 @@ function renderTotals() {
   totalExpenseEl.textContent = formatCurrency(expenseTotal);
   totalBalanceEl.textContent = formatCurrency(incomeTotal - expenseTotal);
 
-  // Color the balance based on sign
+
   const balance = incomeTotal - expenseTotal;
   totalBalanceEl.style.color =
     balance < 0 ? "var(--expense)" : balance > 0 ? "var(--income)" : "";
@@ -538,7 +527,6 @@ function renderTransactions() {
     li.className = "transaction-item";
     li.dataset.id = txn.id;
     li.innerHTML = `
-      <div class="tx-icon ${isIncome ? "income" : "expense"}">${emoji}</div>
       <div class="tx-content">
         <p class="tx-description" title="${escapeHtml(display)}">${escapeHtml(display)}</p>
         <p class="tx-meta">
@@ -561,7 +549,7 @@ function renderTransactions() {
   items.forEach((item) => transactionList.appendChild(item));
 }
 
-/* ---------------- Monthly Summary ---------------- */
+
 
 function renderMonthlySummary() {
   const month = monthSelect.value || getCurrentMonth();
@@ -593,7 +581,7 @@ function renderMonthlySummary() {
 
   const net = income - expense;
 
-  // Top expense category
+
   const expenseByCat = {};
   monthTxns
     .filter((t) => t.type === "expense")
@@ -625,7 +613,6 @@ function renderMonthlySummary() {
     monthTopCategoryAmountEl.textContent = "";
   }
 
-  // Build category expense breakdown for chart
   const chartData = Object.entries(expenseByCat)
     .map(([category, amount]) => ({ category, amount }))
     .sort((a, b) => b.amount - a.amount);
@@ -633,14 +620,13 @@ function renderMonthlySummary() {
   renderChart(chartData);
 }
 
-/* ---------------- Canvas Donut Chart ---------------- */
+
 
 function renderChart(data) {
   const ctx = chartCanvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
   const size = 240;
 
-  // Scale canvas for sharp rendering on high-DPI screens
   chartCanvas.width = size * dpr;
   chartCanvas.height = size * dpr;
   chartCanvas.style.width = "200px";
@@ -653,11 +639,13 @@ function renderChart(data) {
 
   if (!data || data.length === 0) {
     chartEmpty.hidden = false;
+    chartEmpty.style.display = "flex";
     chartCanvas.style.display = "none";
     return;
   }
 
   chartEmpty.hidden = true;
+  chartEmpty.style.display = "none";
   chartCanvas.style.display = "block";
 
   const total = data.reduce((sum, d) => sum + d.amount, 0);
@@ -674,7 +662,7 @@ function renderChart(data) {
     const endAngle = currentAngle + sliceAngle;
     const color = CHART_COLORS[i % CHART_COLORS.length];
 
-    // Draw donut slice using arcs
+
     ctx.beginPath();
     ctx.arc(cx, cy, radius, currentAngle, endAngle);
     ctx.arc(cx, cy, innerRadius, endAngle, currentAngle, true);
@@ -682,7 +670,7 @@ function renderChart(data) {
     ctx.fillStyle = color;
     ctx.fill();
 
-    // Draw white divider lines between slices
+
     ctx.beginPath();
     ctx.moveTo(
       cx + innerRadius * Math.cos(endAngle),
@@ -696,7 +684,7 @@ function renderChart(data) {
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
-    // Legend entry
+
     const li = document.createElement("li");
     li.className = "legend-item";
     li.innerHTML = `
@@ -709,7 +697,7 @@ function renderChart(data) {
     currentAngle = endAngle;
   });
 
-  // Center total label
+
   ctx.fillStyle = "#0f172a";
   ctx.font = "700 19px Inter, sans-serif";
   ctx.textAlign = "center";
@@ -721,24 +709,22 @@ function renderChart(data) {
   ctx.fillText(formatCurrency(total), cx, cy + 12);
 }
 
-/* ---------------- Event Listeners ---------------- */
 
-// Form submit
 form.addEventListener("submit", handleSubmit);
 
-// Cancel edit
+
 cancelEditBtn.addEventListener("click", () => {
   resetForm();
   showToast("Edit cancelled.");
 });
 
-// Type toggle -> update categories
+
 typeRadios.forEach((radio) => {
   radio.addEventListener("change", (e) => {
     if (e.target.checked) {
       const selectedType = e.target.value;
       if (!editingId) {
-        // Only reset category when adding a new transaction
+
         populateCategorySelect(selectedType);
       } else {
         const current = categorySelect.value;
@@ -749,7 +735,7 @@ typeRadios.forEach((radio) => {
   });
 });
 
-// Live re-validation on input
+
 amountInput.addEventListener("input", () => {
   if (amountInput.value.trim()) clearError("amount");
 });
@@ -760,21 +746,21 @@ categorySelect.addEventListener("change", () => {
   if (categorySelect.value) clearError("category");
 });
 
-// Filter buttons
+
 filterBtns.forEach((btn) => {
   btn.addEventListener("click", handleFilterButton);
 });
 
-// Category filter
+
 categoryFilterSelect.addEventListener("change", (e) => {
   categoryFilter = e.target.value;
   renderTransactions();
 });
 
-// Month selector
+
 monthSelect.addEventListener("change", renderMonthlySummary);
 
-// Transaction list actions (event delegation)
+
 transactionList.addEventListener("click", (e) => {
   const editBtn = e.target.closest(".icon-btn.edit");
   const deleteBtn = e.target.closest(".icon-btn.delete");
@@ -788,7 +774,7 @@ transactionList.addEventListener("click", (e) => {
   }
 });
 
-// Keyboard: Escape cancels editing
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && editingId) {
     resetForm();
@@ -796,17 +782,17 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* ---------------- Init ---------------- */
+
 
 function init() {
-  // Defaults
+
   dateInput.value = getTodayISO();
   monthSelect.value = getCurrentMonth();
   populateCategorySelect("expense");
   populateCategoryFilter();
   clearAllErrors();
 
-  // Render view
+
   renderTotals();
   renderTransactions();
   renderMonthlySummary();
